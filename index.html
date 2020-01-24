@@ -25,12 +25,20 @@
   <!-- HEADER -->
   <header class="container-fluid text-center">
     <h1 class="text-light p-4 font-weight-bolder">
-      Lab 1 Geolocation with Bing API
+      Schools of Hamilton
     </h1>
   </header>
 
+  <!-- Alerts Container -->
+  <div id="alertsContainer">
+    <div id="successAlert" class="noAlert" role="alert">
+    </div>
+    <div id="errorAlert" class="noAlert" role="alert">
+    </div>
+  </div>
+
   <!-- Flex Container -->
-  <div class="mt-4 container d-flex justify-between">
+  <div class="mt-4 container d-flex justify-between align-items-start">
     <!-- Bing Map Container -->
     <div class="m-3">
       <h2>Schools of Hamilton</h2>
@@ -74,27 +82,29 @@
     // "Section 23 Program" "Secondary School" "Elementary School" "Post Secondary"
   // "Alternative Education" "Adult Learning" "Middle School" -->
     <div id="filterButtons">
-      <h2>Filter Schools</h2>
+      <h2>Filter</h2>
       <div class="">
-      <button class="mb-1 btn btn-primary">All Schools</button>
-      <button class="m-1 btn btn-primary">Elementary Schools</button>
-      <button class="m-1 btn btn-primary">Middle Schools</button>
-      <button class="m-1 btn btn-primary">Secondary Schools</button>
-      <button class="m-1 btn btn-primary">Post Secondary Schools</button>
-      <button class="m-1 btn btn-primary">Alternative Education Schools</button>
-      <button class="m-1 btn btn-primary">Adult Learning Schools</button>
-      <button class="mt-1 btn btn-primary">Section 23 Schools</button>
-      </div>  
+        <button class="mb-1 btn btn-primary">All</button>
+        <button class="m-1 btn btn-primary">Elementary</button>
+        <button class="m-1 btn btn-primary">Middle</button>
+        <button class="m-1 btn btn-primary">Secondary</button>
+        <button class="m-1 btn btn-primary">Post Secondary</button>
+        <button class="m-1 btn btn-primary">
+          Alternative Education
+        </button>
+        <button class="m-1 btn btn-primary">Adult Learning</button>
+        <button class="mt-1 btn btn-primary">Section 23</button>
+      </div>
     </div>
 
     <!-- Directions Panel Container -->
     <div class="m-3">
       <h2>Directions</h2>
-      <div class="mapComponents">
-        <div class="h-auto">
-          <div class="border border-dark" id="printoutPanel"></div>
+      <div>
+        <div class="">
+          <div class="border border-dark mapComponents bg-light" id="printoutPanel"></div>
           <div>
-            <button class="btn btn-primary btn-lg btn-block">
+            <button class="btn mt-3 btn-primary btn-lg btn-block">
               Clear Directions
             </button>
           </div>
