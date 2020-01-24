@@ -24,3 +24,7 @@ header {
 #printOutPanel {
     
 }
+
+#filterButtons {
+    width: 400px;
+}

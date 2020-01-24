@@ -22,16 +22,15 @@
 
 <!-- BODY -->
 <body class="text-center">
-    
-    <!-- HEADER -->
+  <!-- HEADER -->
   <header class="container-fluid text-center">
     <h1 class="text-light p-4 font-weight-bolder">
       Lab 1 Geolocation with Bing API
     </h1>
   </header>
 
+  <!-- Flex Container -->
   <div class="mt-4 container d-flex justify-between">
-     
     <!-- Bing Map Container -->
     <div class="m-3">
       <h2>Schools of Hamilton</h2>
@@ -43,13 +42,49 @@
       <!-- Form -->
       <form class="p-2 m-2">
         <label for="name">
-            <input class="form-control" placeholder="Name" type="text" name="name" id="name" required/>
+          <input
+            class="form-control"
+            placeholder="Name"
+            type="text"
+            name="name"
+            id="name"
+            required
+          />
         </label>
         <label for="address">
-            <input class="form-control" placeholder="Address" type="text" name="address" id="address" required/>
+          <input
+            class="form-control"
+            placeholder="Address"
+            type="text"
+            name="address"
+            id="address"
+            required
+          />
         </label>
-        <button class="btn btn-primary btn-lg btn-block w-75 m-auto" type="submit">Submit</button>
+        <button
+          class="btn btn-primary btn-lg btn-block w-75 m-auto"
+          type="submit"
+        >
+          Submit
+        </button>
       </form>
+    </div>
+
+    <!-- 
+    // "Section 23 Program" "Secondary School" "Elementary School" "Post Secondary"
+  // "Alternative Education" "Adult Learning" "Middle School" -->
+    <div id="filterButtons">
+      <h2>Filter Schools</h2>
+      <div class="">
+      <button class="mb-1 btn btn-primary">All Schools</button>
+      <button class="m-1 btn btn-primary">Elementary Schools</button>
+      <button class="m-1 btn btn-primary">Middle Schools</button>
+      <button class="m-1 btn btn-primary">Secondary Schools</button>
+      <button class="m-1 btn btn-primary">Post Secondary Schools</button>
+      <button class="m-1 btn btn-primary">Alternative Education Schools</button>
+      <button class="m-1 btn btn-primary">Adult Learning Schools</button>
+      <button class="mt-1 btn btn-primary">Section 23 Schools</button>
+      </div>  
     </div>
 
     <!-- Directions Panel Container -->
