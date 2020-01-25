@@ -36,10 +36,6 @@ header {
     width: 600px;
 }
 
-#printOutPanel {
-    width: auto;
-    overflow-y: scroll;
-}
 
 #filterButtons {
     width: 400px;

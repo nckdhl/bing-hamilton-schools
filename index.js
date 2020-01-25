@@ -7,7 +7,9 @@ import { education as schools } from "./education.js";
 
 let map;
 let directionsManager;
+let searchManager;
 let infobox;
+let myLocationPin;
 let originObject;
 let destinationObject;
 let waypoint1;
@@ -15,6 +17,7 @@ let waypoint2;
 let successAlert = document.querySelector("#successAlert");
 let errorAlert = document.querySelector("#errorAlert");
 
+let that = this;
 /**
  * FUNCTION DEFINITIONS
  */
@@ -49,6 +52,12 @@ const populateDirections = () => {
   console.log("ORIGIN", originObject);
   console.log("DESTINATION", destinationObject);
 
+  if (directionsManager) {
+    directionsManager.clearDisplay();
+    directionsManager.clearAll();
+    console.log("Tried to clear");
+  }
+
   Microsoft.Maps.loadModule("Microsoft.Maps.Directions", async function() {
     console.log("Module loaded!");
     directionsManager = await new Microsoft.Maps.Directions.DirectionsManager(
@@ -77,6 +86,14 @@ const populateDirections = () => {
     });
 
     await directionsManager.calculateDirections();
+
+    Events.addHandler(directionsManager, "directionsError", function() {
+      window.setTimeout(function() {
+        directionsManager.clearAll();
+        document.getElementById("printoutPanel").innerHTML =
+          "Directions cleared (Waypoints cleared, map/itinerary cleared, request and render options reset to default values)";
+      }, 500);
+    });
   });
 };
 
@@ -122,7 +139,7 @@ const pushpinClicked = e => {
   }
 };
 
-const populateMapWith = schools => {
+const populateMap = schools => {
   map.entities.clear();
   schools.map(school => {
     let location = new Location(school.LATITUDE, school.LONGITUDE);
@@ -146,9 +163,15 @@ const populateMapWith = schools => {
       description: schoolProps
     };
 
+    // let myPin = new Pushpin(location);
+
     Events.addHandler(pin, "click", pushpinClicked);
     map.entities.push(pin);
   });
+
+  console.log("My Location Pin", myLocationPin);
+
+  map.entities.push(myLocationPin);
 };
 
 const pinOwnPosition = position => {
@@ -161,23 +184,24 @@ const pinOwnPosition = position => {
 
   originObject = { name: "My Location", location: location };
 
-  let pin = new Pushpin(location, {
-    subTitle: "I'm here"
+  myLocationPin = new Pushpin(location, {
+    title: "My Location"
   });
 
-  pin.metadata = {
+  myLocationPin.metadata = {
     description: `<div style="font-size: 1em; color: black; text-align: center; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;">
                   <p><b>My Location</b></p>
                   <p><b>Latitude:</b> ${position.coords.latitude}, <b>Longitude:</b> ${position.coords.longitude}</p>
                   </div>`
   };
-  Events.addHandler(pin, "click", pushpinClicked);
-  map.entities.push(pin);
+  Events.addHandler(myLocationPin, "click", pushpinClicked);
   map.setOptions({
     center: location
   });
 
-  Events.invoke(pin, "click", pin);
+  Events.invoke(myLocationPin, "click", myLocationPin);
+
+  populateMap(schools);
 };
 
 const showPermissionError = error => {
@@ -198,6 +222,45 @@ const getLocation = () => {
   }
 };
 
+function Search(name, address) {
+  if (!searchManager) {
+    //Create an instance of the search manager and perform the search.
+    Microsoft.Maps.loadModule("Microsoft.Maps.Search", function() {
+      searchManager = new Microsoft.Maps.Search.SearchManager(map);
+      Search();
+    });
+  } else {
+    //Remove any previous results from the map.
+    map.entities.clear();
+    geocodeQuery(name, address);
+  }
+}
+
+function geocodeQuery(name, address) {
+  function resultsCallback(r) {
+    if (r && r.results && r.results.length > 0) {
+      var pin = new Microsoft.Maps.Pushpin(r.results[0].location, {
+        title: name
+      });
+      map.entities.push(pin);
+
+      map.setView({ bounds: r.results[0].bestView });
+    }
+  }
+
+  var searchRequest = {
+    where: address,
+    callback: resultsCallback,
+    errorCallback: function(e) {
+      //If there is an error, alert the user about it.
+      alert("No results found.");
+    }
+  };
+
+  //Make the geocode request.
+  searchManager.geocode(searchRequest);
+}
+
 /**
  * API SET UP
  */
@@ -206,27 +269,43 @@ const getLocation = () => {
  * LOAD COMPONENTS AND SETUP PAGE/MAP
  */
 
-let buttons = document
+let filterButtons = document
   .querySelector("#filterButtons")
   .querySelectorAll("button");
 
-console.log(buttons);
+let clearDirectionsButton = document.querySelector("#clearDirections");
 
-buttons.forEach((button => {
+clearDirectionsButton.addEventListener("click", () => {
+  Events.invoke(directionsManager, "directionsError");
+});
+
+filterButtons.forEach(button => {
   console.log(button);
   button.addEventListener("click", () => {
-    //console.log(that);
-    if (button.innerText == "All"){
-      populateMapWith(schools);
+    if (button.innerText == "All") {
+      populateMap(schools);
     } else {
-      populateMapWith(getSchoolsByCategory(button.innerText));
+      populateMap(getSchoolsByCategory(button.innerText));
     }
-  })
-}));
+    infobox.setOptions({ visible: false });
+    Events.invoke(directionsManager, "directionsError");
+  });
+});
+
+let nameInput = document.querySelector("#name");
+let addressInput = document.querySelector("#address");
+let form = document.querySelector("form");
+let submit = form.querySelector("button");
+
+submit.addEventListener("click", event => {
+  event.preventDefault();
+  let name = nameInput.value;
+  let address = addressInput.value;
+
+  Search(name, address);
+});
 
 loadMapScenario();
-
-populateMapWith(schools);
 
 getLocation();
 
