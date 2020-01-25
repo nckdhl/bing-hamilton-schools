@@ -13,11 +13,9 @@
     integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
     crossorigin="anonymous"
   />
-  <script
-    type="text/javascript"
-    src="https://www.bing.com/api/maps/mapcontrol?key=An2BID8gjDrD-UScA6QxwaY9_2tZ5UfaDZpzaMyH3ZP3MfvTfapUtsG-6EafTre3"
-  ></script>
-  <script type="module" src="index.js"></script>
+  <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=An2BID8gjDrD-UScA6QxwaY9_2tZ5UfaDZpzaMyH3ZP3MfvTfapUtsG-6EafTre3'></script>
+  
+  
 </head>
 
 <!-- BODY -->
@@ -85,15 +83,15 @@
       <h2>Filter</h2>
       <div class="">
         <button class="mb-1 btn btn-primary">All</button>
-        <button class="m-1 btn btn-primary">Elementary</button>
-        <button class="m-1 btn btn-primary">Middle</button>
-        <button class="m-1 btn btn-primary">Secondary</button>
+        <button class="m-1 btn btn-primary">Elementary School</button>
+        <button class="m-1 btn btn-primary">Middle School</button>
+        <button class="m-1 btn btn-primary">Secondary School</button>
         <button class="m-1 btn btn-primary">Post Secondary</button>
         <button class="m-1 btn btn-primary">
           Alternative Education
         </button>
         <button class="m-1 btn btn-primary">Adult Learning</button>
-        <button class="mt-1 btn btn-primary">Section 23</button>
+        <button class="mt-1 btn btn-primary">Section 23 Program</button>
       </div>
     </div>
 
@@ -102,7 +100,7 @@
       <h2>Directions</h2>
       <div>
         <div class="">
-          <div class="border border-dark mapComponents bg-light" id="printoutPanel"></div>
+          <div class="border border-dark mapComponents overflow-auto w-auto p-3 bg-light" id="printoutPanel"></div>
           <div>
             <button class="btn mt-3 btn-primary btn-lg btn-block">
               Clear Directions
@@ -114,7 +112,9 @@
   </div>
 
   <!-- External Scripts -->
-  <script
+  <!-- <script type='text/javascript' src='https://www.bing.com/api/maps/mapcontrol?key=An2BID8gjDrD-UScA6QxwaY9_2tZ5UfaDZpzaMyH3ZP3MfvTfapUtsG-6EafTre3&callback=loadMapScenario' async defer></script> -->
+  <script type="module" src="index.js" defer></script>
+  <!-- <script
     src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
     crossorigin="anonymous"
@@ -128,5 +128,5 @@
     src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
     crossorigin="anonymous"
-  ></script>
+  ></script> -->
 </body>
