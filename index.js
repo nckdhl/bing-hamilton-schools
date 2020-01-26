@@ -17,17 +17,20 @@ let waypoint2;
 let successAlert = document.querySelector("#successAlert");
 let errorAlert = document.querySelector("#errorAlert");
 
-let that = this;
 /**
  * FUNCTION DEFINITIONS
  */
 
+
+// Destructure Microsoft.Maps library object to shorten library calls
 const { Pushpin, Map, Events, Location } = Microsoft.Maps;
 
+/**
+ * Main map load function
+ */
 const loadMapScenario = () => {
   let hamilton = new Location(43.25011, -79.84963);
   map = new Map(document.getElementById("myMap"), {
-    /* No need to set credentials if already passed in URL */
     center: hamilton,
     zoom: 11
   });
@@ -42,33 +45,41 @@ const loadMapScenario = () => {
   infobox.setMap(map);
 };
 
-// "Section 23 Program" "Secondary School" "Elementary School" "Post Secondary"
-// "Alternative Education" "Adult Learning" "Middle School"
+/**
+ * Filters schools by category when passed a string
+ * that matches the school.CATEGORY property
+ * 
+ * @param {any of below strings} category 
+ */// "Section 23 Program" "Secondary School" "Elementary School" "Post Secondary"
+  // "Alternative Education" "Adult Learning" "Middle School"
 const getSchoolsByCategory = category => {
   return schools.filter(school => school.CATEGORY === category);
 };
 
+/**
+ * Populates directions panel with directions
+ */
 const populateDirections = () => {
-  console.log("ORIGIN", originObject);
-  console.log("DESTINATION", destinationObject);
-
+  
   if (directionsManager) {
     directionsManager.clearDisplay();
     directionsManager.clearAll();
-    console.log("Tried to clear");
   }
 
+  // Additional Directions library loaded async
   Microsoft.Maps.loadModule("Microsoft.Maps.Directions", async function() {
     console.log("Module loaded!");
     directionsManager = await new Microsoft.Maps.Directions.DirectionsManager(
       map
     );
-
+    
+    // Your location waypoint
     waypoint1 = await new Microsoft.Maps.Directions.Waypoint({
       address: originObject.name,
       location: originObject.location
     });
 
+    // Pushpin destination waypoint
     waypoint2 = await new Microsoft.Maps.Directions.Waypoint({
       address: destinationObject.name,
       location: destinationObject.location
@@ -87,6 +98,8 @@ const populateDirections = () => {
 
     await directionsManager.calculateDirections();
 
+    // This events handler is fired when "directionsError" naturally occurs
+    // or when invoked manually by a school filter button click, or new directions call
     Events.addHandler(directionsManager, "directionsError", function() {
       window.setTimeout(function() {
         directionsManager.clearAll();
@@ -97,10 +110,25 @@ const populateDirections = () => {
   });
 };
 
+/**
+ * Fires when a pushpin is clicked
+ * and opens up an infobox above the pushpin 
+ * with that pushpin's data as well 
+ * as a "directions" anchor tag that
+ * when clicked calculates directions to that pin
+ * @param {Event} e 
+ */
 const pushpinClicked = e => {
   console.log(e);
   console.log("Push pin clicked");
 
+  /**
+   * Helper function that sets the content 
+   * of the infobox
+   * @param {Location} location 
+   * @param {string} title 
+   * @param {string} description 
+   */
   function setOptions(location, title, description) {
     infobox.setOptions({
       location: location,
@@ -118,11 +146,19 @@ const pushpinClicked = e => {
     });
   }
 
+  /**
+   * Helper function that creates 
+   * object that contains the destination props
+   * @param {string} name 
+   * @param {Location} location 
+   */
   function makeDestinationObject(name, location) {
     return { name: name, location: location };
   }
 
-  //Make sure the infobox has metadata to display.
+  //Make sure the infobox has metadata to display
+  // and check whether the event is coming from a click
+  // or from a manual invocation of the event 
   if (e.metadata || e.target.metadata) {
     if (e.eventName) {
       let location = e.target.getLocation();
@@ -135,10 +171,16 @@ const pushpinClicked = e => {
       setOptions(location, title, description);
       destinationObject = makeDestinationObject(title, location);
     }
-    console.log("HAS METADATA");
+  
   }
 };
 
+/**
+ * Populates map with school pins and user location pin.
+ * Takes in an array of school objects and uses object 
+ * properties to set pushpin data
+ * @param {school[]} schools 
+ */
 const populateMap = schools => {
   map.entities.clear();
   schools.map(school => {
@@ -174,6 +216,15 @@ const populateMap = schools => {
   map.entities.push(myLocationPin);
 };
 
+/**
+ * Callback for user geolocation query
+ * Sets location of user to pushpin 
+ * and populates map with that pushpin 
+ * as well as all the schools pushpins
+ * 
+ * Only called on initial page load
+ * @param {Position} position 
+ */
 const pinOwnPosition = position => {
   console.log(position.coords.latitude, position.coords.longitude);
 
@@ -204,12 +255,20 @@ const pinOwnPosition = position => {
   populateMap(schools);
 };
 
+/**
+ * Error callback in case the user
+ * refuses the location request
+ * @param {error} error 
+ */
 const showPermissionError = error => {
   console.log(error);
   errorAlert.setAttribute("class", "alert alert-danger");
   errorAlert.innerHTML += `<p>${error.message}</p>`;
 };
 
+/**
+ * Invokes the geolocation request
+ */
 const getLocation = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
@@ -222,6 +281,12 @@ const getLocation = () => {
   }
 };
 
+/**
+ * Wrapper function that ensures that the SearchManager
+ * library is loaded
+ * @param {string} name 
+ * @param {string} address 
+ */
 function Search(name, address) {
   if (!searchManager) {
     //Create an instance of the search manager and perform the search.
@@ -230,12 +295,17 @@ function Search(name, address) {
       Search();
     });
   } else {
-    //Remove any previous results from the map.
-    map.entities.clear();
     geocodeQuery(name, address);
   }
 }
 
+/**
+ * Packages the name and address
+ * as an object to pass to the
+ * SearchManager geocode request
+ * @param {string} name 
+ * @param {string} address 
+ */
 function geocodeQuery(name, address) {
   function resultsCallback(r) {
     if (r && r.results && r.results.length > 0) {
@@ -262,11 +332,7 @@ function geocodeQuery(name, address) {
 }
 
 /**
- * API SET UP
- */
-
-/**
- * LOAD COMPONENTS AND SETUP PAGE/MAP
+ * LOAD COMPONENTS AND SETUP PAGE/MAP, BUTTON EVENTS
  */
 
 let filterButtons = document
@@ -275,10 +341,18 @@ let filterButtons = document
 
 let clearDirectionsButton = document.querySelector("#clearDirections");
 
+/**
+ * Manuall invokes the "directionsError" which clears the directions
+ */
 clearDirectionsButton.addEventListener("click", () => {
   Events.invoke(directionsManager, "directionsError");
 });
 
+/**
+ * When the filter buttons are clicked the button text value
+ * is used to filter the schools array and populate the map with
+ * the remaining schools
+ */
 filterButtons.forEach(button => {
   console.log(button);
   button.addEventListener("click", () => {
@@ -297,6 +371,10 @@ let addressInput = document.querySelector("#address");
 let form = document.querySelector("form");
 let submit = form.querySelector("button");
 
+/**
+ * When pin name and address form are
+ * submitted then a geocode request is made
+ */
 submit.addEventListener("click", event => {
   event.preventDefault();
   let name = nameInput.value;
@@ -305,8 +383,10 @@ submit.addEventListener("click", event => {
   Search(name, address);
 });
 
+// LOAD MAP
 loadMapScenario();
 
+// GET USER LOCATION
 getLocation();
 
-// });
+
